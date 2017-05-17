@@ -101,6 +101,7 @@ public class HttpResponse {
         switch (getStatus()) {
           case 400:
             try {
+	      System.out.println(responseAsString);
               throw new PagSeguroBadRequestException(this, XMLUtils.unmarshal(pagSeguro,
                   ServerErrorsXML.class, asString()));
             } catch (JAXBException e) {
