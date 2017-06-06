@@ -27,6 +27,5 @@ package br.com.uol.pagseguro.api.common.domain.enums;
  * @author PagSeguro Internet Ltda.
  */
 public enum DocumentType {
-
   CPF, CNPJ;
 }

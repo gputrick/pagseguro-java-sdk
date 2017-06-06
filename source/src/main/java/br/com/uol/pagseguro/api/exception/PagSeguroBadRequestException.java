@@ -21,6 +21,18 @@
 package br.com.uol.pagseguro.api.exception;
 
 import br.com.uol.pagseguro.api.http.HttpResponse;
+import java.io.IOException;
+import java.io.StringReader;
+import java.math.BigDecimal;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * The exception is thrown when a "bad request" occurs
@@ -56,5 +68,31 @@ public class PagSeguroBadRequestException extends PagSeguroServerException {
   public ServerErrors getErrors() {
     return errors;
   }
-
+	
+  /**
+   * Get message errors
+   *
+   * @return message
+   */
+  public String getMessage(){
+    String msg = "";
+    try {
+	DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+  	DocumentBuilder builder = factory.newDocumentBuilder();
+  	InputSource is = new InputSource(new StringReader(getServerResponse().asString()));
+  	Document doc = builder.parse(is);
+  	NodeList errors = doc.getDocumentElement().getElementsByTagName("error");
+  	for (int i = 0; i < errors.getLength(); i++)
+  	{
+  	   msg += errors.item(i).getLastChild().getTextContent() + " ";
+  	}
+    } catch (ParserConfigurationException e) {
+  	e.printStackTrace();
+    }catch (SAXException e) {
+  	e.printStackTrace();
+    }catch (IOException e) {
+  	e.printStackTrace();
+    }
+    return msg;
+  }
 }
